@@ -46,7 +46,7 @@
 
       .button-container {
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
       }
 
       button {
@@ -85,12 +85,13 @@
         background-color: #0376c2;
         margin: 0px;
         padding-top: 20px;
-        padding-bottom: 5px;
+        padding-bottom: 1px;
       }
       .setup-area {
         /* light grey */
         background-color: #f1f1f1;
         padding-top: 10px;
+        padding-bottom: 4px;
         margin-bottom: 0px;
         /* a bottom border */
         border-bottom: 1px solid #ccc;
@@ -156,7 +157,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          margin-bottom: 20px;
+          margin-bottom: 0px;
         "
       >
         <!-- add a setting gear icon -->
@@ -177,10 +178,10 @@
       <!-- An area to let users manage a list of colors to use for the chart and show default color list -->
       <div
         style="
-          display: flex;
           justify-content: center;
           align-items: center;
-          margin-bottom: 0px;
+          margin-bottom: 5px;
+          padding-top: 5px;
         "
       >
         <div
@@ -191,26 +192,18 @@
             id="colorList"
             style="display: flex; justify-content: center; align-items: center"
           ></div>
+          <input
+            type="color"
+            id="colorPicker"
+            value="#000000"
+            style="margin-left: 10px"
+          />
         </div>
-        <input
-          type="color"
-          id="colorPicker"
-          value="#000000"
-          style="margin-left: 10px"
-        />
-        <!-- update color -->
-        <button
-          onclick="updateColor()"
-          class="button-color-config"
-          id="updateColor"
-        >
-          <i class="fa fa-cog" aria-hidden="true"></i>
 
-          修改顏色
-        </button>
-          <button onclick="addColor()" class="button-color-config">
-            新增顏色
-          </button>
+        <!-- update color -->
+        <div
+          style="display: flex; justify-content: center; align-items: center"
+        >
           <button
             onclick="removeColor()"
             class="button-color-config"
@@ -218,6 +211,20 @@
           >
             移除顏色
           </button>
+          <button
+            onclick="updateColor()"
+            class="button-color-config"
+            id="updateColor"
+          >
+            <i class="fa fa-cog" aria-hidden="true"></i>
+
+            修改顏色
+          </button>
+
+          <button onclick="addColor()" class="button-color-config">
+            新增顏色
+          </button>
+        </div>
       </div>
     </div>
     <style>
