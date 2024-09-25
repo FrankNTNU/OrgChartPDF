@@ -94,72 +94,24 @@ google.charts.load('current', { packages: ["orgchart"] });
 google.charts.setOnLoadCallback(drawChart);
 
 const levelColors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c'];
-
-let chartData = [
-    [{ 'v': 'Mike', 'f': '<div style="background-color:#3498db; color:white; padding:5px; border-radius:5px;"><strong>Mike</strong><br/>執行長</div>' }, '', '首席執行官'],
-    [{ 'v': 'Jim', 'f': '<div style="background-color:#2ecc71; color:white; padding:5px; border-radius:5px;"><strong>Jim</strong><br/>營運長</div>' }, 'Mike', '首席營運官'],
-    [{ 'v': 'Alice', 'f': '<div style="background-color:#2ecc71; color:white; padding:5px; border-radius:5px;"><strong>Alice</strong><br/>財務長</div>' }, 'Mike', '首席財務官'],
-    [{ 'v': 'Bob', 'f': '<div style="background-color:#2ecc71; color:white; padding:5px; border-radius:5px;"><strong>Bob</strong><br/>技術長</div>' }, 'Mike', '首席技術官'],
-    [{ 'v': 'Carol', 'f': '<div style="background-color:#e74c3c; color:white; padding:5px; border-radius:5px;"><strong>Carol</strong><br/>人力資源總監</div>' }, 'Jim', '人力資源總監'],
-    [{ 'v': 'David', 'f': '<div style="background-color:#e74c3c; color:white; padding:5px; border-radius:5px;"><strong>David</strong><br/>行銷總監</div>' }, 'Jim', '行銷總監'],
-    [{ 'v': 'Eve', 'f': '<div style="background-color:#e74c3c; color:white; padding:5px; border-radius:5px;"><strong>Eve</strong><br/>財務控制師</div>' }, 'Alice', '財務控制師'],
-    [{
-        'v': 'Frank',
-        'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Frank</strong><br/>市場經理</div>'
-    },
-        'David',
-        '市場經理'
-    ],
-    [
-        {
-            'v': 'Grace',
-            'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Grace</strong><br/>品牌經理</div>'
-        },
-        'David',
-        '品牌經理'
-    ],
-    [
-        {
-            'v': 'Helen',
-            'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Helen</strong><br/>市場專員</div>'
-        },
-        'Frank',
-        '市場專員'
-    ],
-    [
-        {
-            'v': 'Ivy',
-            'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Ivy</strong><br/>品牌專員</div>'
-        },
-        'Grace',
-        '品牌專員'
-    ],
-    [
-        {
-            'v': 'Jack',
-            'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Jack</strong><br/>市場助理</div>'
-        },
-        'Helen',
-        '市場助理'
-    ],
-    [
-        {
-            'v': 'Kelly',
-            'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Kelly</strong><br/>品牌助理</div>'
-        },
-        'Ivy',
-        '品牌助理'
-    ],
-    [
-        {
-            'v': 'Lily',
-            'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Lily</strong><br/>市場實習生</div>'
-        },
-        'Jack',
-        '市場實習生'
-    ],
-];
-
+let exampleData = [
+    ["Mike", "首席執行官", "", "首席執行官"],
+    ["Jim", "首席營運官", "Mike", "首席營運官"],
+    ["Alice", "首席財務官", "Mike", "首席財務官"],
+    ["Bob", "首席技術官", "Mike", "首席技術官"],
+    ["Carol", "人力資源總監", "Jim", "人力資源總監"],
+    ["David", "行銷總監", "Jim", "行銷總監"],
+    ["Eve", "財務控制師", "Alice", "財務控制師"],
+    ["Frank", "市場經理", "David", "市場經理"],
+    ["Grace", "品牌經理", "David", "品牌經理"],
+    ["Helen", "市場專員", "Frank", "市場專員"],
+    ["Ivy", "品牌專員", "Grace", "品牌專員"],
+    ["Jack", "市場助理", "Helen", "市場助理"],
+    ["Kelly", "品牌助理", "Ivy", "品牌助理"],
+    ["Lily", "市場實習生", "Jack", "市場實習生"]
+]
+    ;
+let chartData = convertFromDataToChart(exampleData);
 let chart;
 let data;
 let options;
@@ -185,6 +137,17 @@ function updateChartColor() {
 }
 function chartNodeHtml(name, role, color) {
     return `<div style="background-color:${color}; color:white; padding:5px; border-radius:5px; font-family: 'Microsoft JhengHei';"><strong>${name}</strong><br/>${role}</div>`;
+}
+function convertFromDataToChart(data) {
+    return data.map((row) => {
+        const [name, role, manager, tooltip] = row;
+        const level = getLevel(manager, data);
+        const color = levelColors[level % levelColors.length];
+        return [{
+            'v': name,
+            'f': chartNodeHtml(name, role, color)
+        }, manager, tooltip];
+    });
 }
 function drawChart() {
     // update chartData background-color based on level
@@ -327,7 +290,8 @@ function getLevel(manager, data) {
 
     while (currentManager) {
         if (visited.has(currentManager)) {
-            console.error('Infinite loop detected. Circular hierarchy found.');
+            // pop up message
+            console.error('Infinite loop detected. Circular hierarchy found.' + currentManager);
             break;  // Break the loop if we revisit the same manager
         }
 
