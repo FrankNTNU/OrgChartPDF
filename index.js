@@ -9,16 +9,63 @@ document.addEventListener("DOMContentLoaded", function () {
     // update the h2 inside the div with id 'chart_title'
     document.getElementById("chart_title_div").textContent = this.value;
   });
+
+  // load the default colors from localStorage
+  const savedColors = localStorage.getItem("levelColors");
+  console.log("savedColors", savedColors);
+
+  if (savedColors) {
+    console.log("JSON.parse(savedColors)", JSON.parse(savedColors));
+    levelColors = JSON.parse(savedColors);
+  } else {
+    levelColors = [
+      "#3498db",
+      "#2ecc71",
+      "#e74c3c",
+      "#f39c12",
+      "#9b59b6",
+      "#1abc9c",
+    ];
+  }
+  // populate the colorList with the saved colors
+  const colorList = document.getElementById("colorList");
+  levelColors.forEach((color) => {
+    const colorBox = document.createElement("div");
+    colorBox.className = "color-box";
+    colorBox.style.backgroundColor = color;
+    colorBox.onclick = function () {
+      selectColor(this);
+    };
+    colorList.appendChild(colorBox);
+  });
+  chartData = convertFromDataToChart(exampleData);
+  google.charts.load("current", { packages: ["orgchart"] });
+  google.charts.setOnLoadCallback(drawChart);
+  // hide update and remove buttons
+  document.getElementById("updateColor").style.display = "none";
+  document.getElementById("removeColor").style.display = "none";
 });
+function updateLocalstorageColors() {
+  localStorage.setItem("levelColors", JSON.stringify(levelColors));
+}
 function deselectColor() {
   if (selectedColorBox) {
     selectedColorBox.innerHTML = ""; // Clear previous icon
     selectedColorBox.style.border = ""; // Remove the border
     selectedColorBox = null; // Clear selection
+    updateLocalstorageColors();
   }
 }
 function selectColor(element) {
   const highlightAmber = "#f39c12"; // Amber color for highlighting
+
+  if (selectedColorBox === element) {
+    // If the same color box is clicked again, deselect it
+    deselectColor();
+    toggleUpdateRemoveColorButtons();
+    return;
+  }
+
   if (selectedColorBox) {
     selectedColorBox.style.border = ""; // Remove the border from the previously selected color
     // remove check icon
@@ -41,8 +88,8 @@ function selectColor(element) {
   const currentSelectedColor = selectedColorBox.style.backgroundColor;
   // make the color  bigger in radius
   selectedColorBox.style.border = `4px solid ${currentSelectedColor}`;
+  toggleUpdateRemoveColorButtons();
 }
-
 function updateColor() {
   if (selectedColorBox) {
     const colorPicker = document.getElementById("colorPicker");
@@ -60,9 +107,11 @@ function updateColor() {
 
     drawChart();
     deselectColor();
+    updateLocalstorageColors();
   } else {
     alert("請先選擇要修改的顏色");
   }
+  toggleUpdateRemoveColorButtons();
 }
 function addColor() {
   const colorPicker = document.getElementById("colorPicker");
@@ -83,10 +132,10 @@ function addColor() {
   colorList.appendChild(newColorBox);
   levelColors.push(newColor);
   updateChartColor();
-
   drawChart();
+  updateLocalstorageColors();
+  toggleUpdateRemoveColorButtons();
 }
-
 function removeColor() {
   if (selectedColorBox) {
     const index = Array.from(selectedColorBox.parentNode.children).indexOf(
@@ -99,21 +148,25 @@ function removeColor() {
 
     drawChart();
     deselectColor();
+
+    updateLocalstorageColors();
+    toggleUpdateRemoveColorButtons();
   } else {
     alert("請先選擇要移除的顏色");
   }
 }
-google.charts.load("current", { packages: ["orgchart"] });
-google.charts.setOnLoadCallback(drawChart);
-
-const levelColors = [
-  "#3498db",
-  "#2ecc71",
-  "#e74c3c",
-  "#f39c12",
-  "#9b59b6",
-  "#1abc9c",
-];
+function toggleUpdateRemoveColorButtons() {
+  const updateColorButton = document.getElementById("updateColor");
+  const removeColorButton = document.getElementById("removeColor");
+  if (selectedColorBox) {
+    updateColorButton.style.display = "block";
+    removeColorButton.style.display = "block";
+  } else {
+    updateColorButton.style.display = "none";
+    removeColorButton.style.display = "none";
+  }
+}
+let levelColors = [];
 let exampleData = [
   ["Mike", "首席執行官", "", "首席執行官"],
   ["Jim", "首席營運官", "Mike", "首席營運官"],
@@ -130,7 +183,7 @@ let exampleData = [
   ["Kelly", "品牌助理", "Ivy", "品牌助理"],
   ["Lily", "市場實習生", "Jack", "市場實習生"],
 ];
-let chartData = convertFromDataToChart(exampleData);
+let chartData;
 let chart;
 let data;
 let options;
@@ -354,7 +407,7 @@ function getLevel(manager, data) {
 function downloadTemplate() {
   // Define the data for the Excel file
   const data = [
-    ["名稱", "職位", "主管", "Tooltip"],
+    ["員工", "職位", "主管", "說明"],
     ["羅波特", "CEO", "", "首席執行官"],
     ["米雪兒", "COO", "羅波特", "首席營運官"],
     ["李明", "CTO", "羅波特", "首席技術官"],

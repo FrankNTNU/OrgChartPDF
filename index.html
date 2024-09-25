@@ -51,7 +51,7 @@
 
       button {
         /* white */
-        background-color: #fff; 
+        background-color: #fff;
         border: none;
         padding: 10px 20px;
         margin: 0 10px;
@@ -79,7 +79,7 @@
         font-size: 14px;
       }
       .button-color-config:hover {
-        background-color:white;
+        background-color: white;
       }
       .banner-div {
         background-color: #0376c2;
@@ -91,6 +91,9 @@
         /* light grey */
         background-color: #f1f1f1;
         padding-top: 10px;
+        margin-bottom: 0px;
+        /* a bottom border */
+        border-bottom: 1px solid #ccc;
       }
       @media print {
         .button-container {
@@ -108,7 +111,7 @@
 
   <body>
     <div class="banner-div">
-      <h1 style="margin: 0px;color:white">互動式組織圖</h1>
+      <h1 style="margin: 0px; color: white">互動式組織圖</h1>
       <!-- Add a tag line -->
       <p
         style="
@@ -146,94 +149,77 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
- <div class="setup-area">
-       <!-- an textbox to let users set the chart title -->
-       <div
-       style="
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         margin-bottom: 20px;
-       "
-     >
-       <label for="chartTitle" style="margin-right: 10px">標題：</label>
-       <input
-         type="text"
-         id="chartTitle"
-         placeholder="輸入組織圖標題"
-         value="我的組織圖"
-         style="
-           width: 256px;
-           padding: 10px;
-           border-radius: 5px;
-           border: 1px solid #ccc;
-         "
-       />
-     </div>
-     <!-- An area to let users manage a list of colors to use for the chart and show default color list -->
-     <div
-       style="
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         margin-bottom: 20px;
-       "
-     >
-       <div style="display: flex; justify-content: center; align-items: center">
-         <p style="margin-right: 10px">顏色：</p>
-         <div
-           id="colorList"
-           style="display: flex; justify-content: center; align-items: center"
-         >
-           <div
-             class="color-box"
-             style="background-color: #3498db"
-             onclick="selectColor(this)"
-           ></div>
-           <div
-             class="color-box"
-             style="background-color: #2ecc71"
-             onclick="selectColor(this)"
-           ></div>
-           <div
-             class="color-box"
-             style="background-color: #e74c3c"
-             onclick="selectColor(this)"
-           ></div>
-           <div
-             class="color-box"
-             style="background-color: #f39c12"
-             onclick="selectColor(this)"
-           ></div>
-           <div
-             class="color-box"
-             style="background-color: #9b59b6"
-             onclick="selectColor(this)"
-           ></div>
-           <div
-             class="color-box"
-             style="background-color: #1abc9c"
-             onclick="selectColor(this)"
-           ></div>
-         </div>
-       </div>
-       <input
-         type="color"
-         id="colorPicker"
-         value="#000000"
-         style="margin-left: 10px"
-       />
-       <!-- update color -->
-       <button onclick="updateColor()" class="button-color-config">
-         修改顏色
-       </button>
-       <button onclick="addColor()" class="button-color-config">新增顏色</button>
-       <button onclick="removeColor()" class="button-color-config">
-         移除顏色
-       </button>
-     </div>
- 
- </div>
+    <div class="setup-area">
+      <!-- an textbox to let users set the chart title -->
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 20px;
+        "
+      >
+        <!-- add a setting gear icon -->
+        <label for="chartTitle" style="margin-right: 10px">標題：</label>
+        <input
+          type="text"
+          id="chartTitle"
+          placeholder="輸入組織圖標題"
+          value="我的組織圖"
+          style="
+            width: 256px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+          "
+        />
+      </div>
+      <!-- An area to let users manage a list of colors to use for the chart and show default color list -->
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 0px;
+        "
+      >
+        <div
+          style="display: flex; justify-content: center; align-items: center"
+        >
+          <p style="margin-right: 10px">顏色：</p>
+          <div
+            id="colorList"
+            style="display: flex; justify-content: center; align-items: center"
+          ></div>
+        </div>
+        <input
+          type="color"
+          id="colorPicker"
+          value="#000000"
+          style="margin-left: 10px"
+        />
+        <!-- update color -->
+        <button
+          onclick="updateColor()"
+          class="button-color-config"
+          id="updateColor"
+        >
+          <i class="fa fa-cog" aria-hidden="true"></i>
+
+          修改顏色
+        </button>
+          <button onclick="addColor()" class="button-color-config">
+            新增顏色
+          </button>
+          <button
+            onclick="removeColor()"
+            class="button-color-config"
+            id="removeColor"
+          >
+            移除顏色
+          </button>
+      </div>
+    </div>
     <style>
       .color-box {
         width: 20px;
@@ -247,7 +233,7 @@
     <h2 style="text-align: center; margin-bottom: 20px" id="chart_title_div">
       我的組織圖
     </h2>
-    <div id="chart_div" ></div>
+    <div id="chart_div"></div>
   </body>
   <!-- Footer to specify company name, author, and contact information -->
   <footer>
