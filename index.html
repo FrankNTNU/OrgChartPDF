@@ -88,6 +88,7 @@
     </div>
     <!-- an textbox to let users set the chart title -->
     <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+        <label for="chartTitle" style="margin-right: 10px;">標題：</label>
         <input type="text" id="chartTitle" placeholder="輸入組織圖標題"
             style="width: 256px; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
     </div>
@@ -105,18 +106,27 @@
             </div>
         </div>
         <input type="color" id="colorPicker" value="#000000" style="margin-left: 10px;">
+        <!-- update color -->
+        <button onclick="updateColor()">修改顏色</button>
         <button onclick="addColor()">新增顏色</button>
         <button onclick="removeColor()">移除顏色</button>
     </div>
 
     <script>
         let selectedColorBox = null;
-
-        function selectColor(element) {
+        function deselectColor() {
             if (selectedColorBox) {
-                // Remove the check icon and border from the previously selected color
                 selectedColorBox.innerHTML = ""; // Clear previous icon
                 selectedColorBox.style.border = ""; // Remove the border
+                selectedColorBox = null; // Clear selection
+            }
+        }
+        function selectColor(element) {
+            const highlightAmber = '#f39c12'; // Amber color for highlighting
+            if (selectedColorBox) {
+                selectedColorBox.style.border = ""; // Remove the border from the previously selected color
+                // remove check icon
+                selectedColorBox.innerHTML = "";
             }
 
             selectedColorBox = element; // Update the selected color box
@@ -126,17 +136,35 @@
             checkIcon.innerHTML = '&#10003;'; // Unicode check mark
             checkIcon.style.fontSize = '16px';
             checkIcon.style.position = 'absolute';
-            checkIcon.style.top = '50%';
+            checkIcon.style.top = '-15px'; // Position the check icon above the color box
             checkIcon.style.left = '50%';
+            checkIcon.style.color = highlightAmber;
             checkIcon.style.transform = 'translate(-50%, -50%)';
             selectedColorBox.style.position = 'relative'; // Ensure the parent is positioned
             selectedColorBox.appendChild(checkIcon);
-
-            // Add a border to indicate selection
-            selectedColorBox.style.border = '2px solid #333';
+            const currentSelectedColor = selectedColorBox.style.backgroundColor;
+            // make the color  bigger in radius
+            selectedColorBox.style.border = `4px solid ${currentSelectedColor}`;
         }
 
+        function updateColor() {
+            if (selectedColorBox) {
+                const colorPicker = document.getElementById('colorPicker');
+                // if the color already exists in the list, do not add it again
+                if (levelColors.includes(colorPicker.value)) {
+                    alert('此顏色已存在於列表中');
+                    return;
+                }
+                selectedColorBox.style.backgroundColor = colorPicker.value;
+                const index = Array.from(selectedColorBox.parentNode.children).indexOf(selectedColorBox);
+                levelColors[index] = colorPicker.value;
+                drawChart();
+                deselectColor();
 
+            } else {
+                alert('請先選擇要修改的顏色');
+            }
+        }
         function addColor() {
             const colorPicker = document.getElementById('colorPicker');
             const newColor = colorPicker.value;
@@ -165,6 +193,8 @@
                 selectedColorBox.remove();
                 selectedColorBox = null; // Clear selection after removal
                 drawChart();
+                deselectColor();
+
             } else {
                 alert('請先選擇要移除的顏色');
             }
@@ -180,7 +210,6 @@
             cursor: pointer;
         }
     </style>
-
 
     <div id="chart_div"></div>
 
@@ -218,9 +247,9 @@
                 const level = getLevel(manager, output.slice(1));
                 const color = levelColors[level % levelColors.length];
                 return [{
-                        'v': name,
-                        'f': `<div style="background-color:${color}; color:white; padding:5px; border-radius:5px; font-family: 'Microsoft JhengHei';"><strong>${name}</strong><br/>${role}</div>`
-                    }, manager, tooltip];
+                    'v': name,
+                    'f': `<div style="background-color:${color}; color:white; padding:5px; border-radius:5px; font-family: 'Microsoft JhengHei';"><strong>${name}</strong><br/>${role}</div>`
+                }, manager, tooltip];
             });
         }
         function drawChart() {
@@ -292,7 +321,7 @@
                 margin: [10, 10],  // Set margins (top, left, bottom, right) in mm
                 filename: 'org_chart.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, allowTaint: true },
+                html2canvas: { scale: 4, allowTaint: true },
                 jsPDF: {
                     unit: 'mm', format: [
                         tableWidth + 50,
