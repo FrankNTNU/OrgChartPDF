@@ -89,7 +89,7 @@
     <!-- an textbox to let users set the chart title -->
     <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
         <label for="chartTitle" style="margin-right: 10px;">標題：</label>
-        <input type="text" id="chartTitle" placeholder="輸入組織圖標題"
+        <input type="text" id="chartTitle" placeholder="輸入組織圖標題" value="我的組織圖"
             style="width: 256px; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
     </div>
     <!-- An area to let users manage a list of colors to use for the chart and show default color list -->
@@ -226,7 +226,65 @@
             [{ 'v': 'Bob', 'f': '<div style="background-color:#2ecc71; color:white; padding:5px; border-radius:5px;"><strong>Bob</strong><br/>技術長</div>' }, 'Mike', '首席技術官'],
             [{ 'v': 'Carol', 'f': '<div style="background-color:#e74c3c; color:white; padding:5px; border-radius:5px;"><strong>Carol</strong><br/>人力資源總監</div>' }, 'Jim', '人力資源總監'],
             [{ 'v': 'David', 'f': '<div style="background-color:#e74c3c; color:white; padding:5px; border-radius:5px;"><strong>David</strong><br/>行銷總監</div>' }, 'Jim', '行銷總監'],
-            [{ 'v': 'Eve', 'f': '<div style="background-color:#e74c3c; color:white; padding:5px; border-radius:5px;"><strong>Eve</strong><br/>財務控制師</div>' }, 'Alice', '財務控制師']
+            [{ 'v': 'Eve', 'f': '<div style="background-color:#e74c3c; color:white; padding:5px; border-radius:5px;"><strong>Eve</strong><br/>財務控制師</div>' }, 'Alice', '財務控制師'],
+            // more fake data to create deeper org chart
+            [
+                {
+                    'v': 'Frank',
+                    'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Frank</strong><br/>市場經理</div>'
+
+                },
+                'David',
+                '市場經理'
+            ],
+            [
+                {
+                    'v': 'Grace',
+                    'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Grace</strong><br/>品牌經理</div>'
+                },
+                'David',
+                '品牌經理'
+            ],
+            [
+                {
+                    'v': 'Helen',
+                    'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Helen</strong><br/>市場專員</div>'
+                },
+                'Frank',
+                '市場專員'
+            ],
+            [
+                {
+                    'v': 'Ivy',
+                    'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Ivy</strong><br/>品牌專員</div>'
+                },
+                'Grace',
+                '品牌專員'
+            ],
+            [
+                {
+                    'v': 'Jack',
+                    'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Jack</strong><br/>市場助理</div>'
+                },
+                'Helen',
+                '市場助理'
+            ],
+            [
+                {
+                    'v': 'Kelly',
+                    'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Kelly</strong><br/>品牌助理</div>'
+                },
+                'Ivy',
+                '品牌助理'
+            ],
+            [
+                {
+                    'v': 'Lily',
+                    'f': '<div style="background-color:#f39c12; color:white; padding:5px; border-radius:5px;"><strong>Lily</strong><br/>市場實習生</div>'
+                },
+                'Jack',
+                '市場實習生'
+            ],
         ];
 
         let chart;
