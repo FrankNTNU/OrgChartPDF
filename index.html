@@ -8,13 +8,13 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
     <style>
+        * {
+            font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+        }
+
         body {
-            font-family: 'Arial', sans-serif;
             background-color: #f7f9fc;
             margin: 0;
             padding: 20px;
@@ -86,6 +86,102 @@
         <input type="file" id="fileInput" accept=".xlsx" onchange="handleFileUpload(event)">
         <button onclick="downloadTemplate()">下載範本</button>
     </div>
+    <!-- an textbox to let users set the chart title -->
+    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+        <input type="text" id="chartTitle" placeholder="輸入組織圖標題"
+            style="width: 256px; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+    </div>
+    <!-- An area to let users manage a list of colors to use for the chart and show default color list -->
+    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <p style="margin-right: 10px;">預設顏色：</p>
+            <div id="colorList" style="display: flex; justify-content: center; align-items: center;">
+                <div class="color-box" style="background-color: #3498db;" onclick="selectColor(this)"></div>
+                <div class="color-box" style="background-color: #2ecc71;" onclick="selectColor(this)"></div>
+                <div class="color-box" style="background-color: #e74c3c;" onclick="selectColor(this)"></div>
+                <div class="color-box" style="background-color: #f39c12;" onclick="selectColor(this)"></div>
+                <div class="color-box" style="background-color: #9b59b6;" onclick="selectColor(this)"></div>
+                <div class="color-box" style="background-color: #1abc9c;" onclick="selectColor(this)"></div>
+            </div>
+        </div>
+        <input type="color" id="colorPicker" value="#000000" style="margin-left: 10px;">
+        <button onclick="addColor()">新增顏色</button>
+        <button onclick="removeColor()">移除顏色</button>
+    </div>
+
+    <script>
+        let selectedColorBox = null;
+
+        function selectColor(element) {
+            if (selectedColorBox) {
+                // Remove the check icon and border from the previously selected color
+                selectedColorBox.innerHTML = ""; // Clear previous icon
+                selectedColorBox.style.border = ""; // Remove the border
+            }
+
+            selectedColorBox = element; // Update the selected color box
+
+            // Create and append a check icon to the currently selected color
+            const checkIcon = document.createElement('span');
+            checkIcon.innerHTML = '&#10003;'; // Unicode check mark
+            checkIcon.style.fontSize = '16px';
+            checkIcon.style.position = 'absolute';
+            checkIcon.style.top = '50%';
+            checkIcon.style.left = '50%';
+            checkIcon.style.transform = 'translate(-50%, -50%)';
+            selectedColorBox.style.position = 'relative'; // Ensure the parent is positioned
+            selectedColorBox.appendChild(checkIcon);
+
+            // Add a border to indicate selection
+            selectedColorBox.style.border = '2px solid #333';
+        }
+
+
+        function addColor() {
+            const colorPicker = document.getElementById('colorPicker');
+            const newColor = colorPicker.value;
+            const colorList = document.getElementById('colorList');
+            // if the color already exists in the list, do not add it again
+            if (levelColors.includes(newColor)) {
+                alert('此顏色已存在於列表中');
+                return;
+            }
+            const newColorBox = document.createElement('div');
+            newColorBox.className = 'color-box';
+            newColorBox.style.backgroundColor = newColor;
+            newColorBox.onclick = function () {
+                selectColor(this);
+            };
+
+            colorList.appendChild(newColorBox);
+            levelColors.push(newColor);
+            drawChart();
+        }
+
+        function removeColor() {
+            if (selectedColorBox) {
+                const index = Array.from(selectedColorBox.parentNode.children).indexOf(selectedColorBox);
+                levelColors.splice(index, 1);
+                selectedColorBox.remove();
+                selectedColorBox = null; // Clear selection after removal
+                drawChart();
+            } else {
+                alert('請先選擇要移除的顏色');
+            }
+        }
+    </script>
+
+    <style>
+        .color-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+    </style>
+
+
     <div id="chart_div"></div>
 
     <script type="text/javascript">
@@ -107,7 +203,29 @@
         let chart;
         let data;
         let options;
+        function updateChartColor() {
+            const output = chartData.map(([person, supervisor, tooltip]) => [
+                person.v,          // Extract the name
+                person.f.split('<br/>')[1].replace('</div>', ''),  // Extract the position
+                supervisor || "",  // Supervisor (use an empty string if none)
+                tooltip           // Use the position as Tooltip for now (can adjust later if needed)
+            ]);
+
+            // Add the header row manually
+            output.unshift(["名稱", "職位", "主管", "Tooltip"]);
+            chartData = output.slice(1).map((row) => {
+                const [name, role, manager, tooltip] = row;
+                const level = getLevel(manager, output.slice(1));
+                const color = levelColors[level % levelColors.length];
+                return [{
+                        'v': name,
+                        'f': `<div style="background-color:${color}; color:white; padding:5px; border-radius:5px; font-family: 'Microsoft JhengHei';"><strong>${name}</strong><br/>${role}</div>`
+                    }, manager, tooltip];
+            });
+        }
         function drawChart() {
+            updateChartColor();
+            // update chartData background-color based on level
             data = new google.visualization.DataTable();
             data.addColumn('string', 'Name');
             data.addColumn('string', 'Manager');
@@ -133,17 +251,33 @@
             const chartDiv = document.getElementById('chart_div');
             // Select the whole table element
             const table = chartDiv.querySelector('.google-visualization-orgchart-table');
-            // get table width
             // Clone the table to avoid modifying the original element
             const clone = table.cloneNode(true);
-            document.body.appendChild(clone);
+            // Add the title to the cloned table
+            const title = document.getElementById('chartTitle').value;
+            // Wrap the title in a div element with styling
+            const titleDiv = document.createElement('div');
+            titleDiv.style.textAlign = 'center';
+            titleDiv.style.fontSize = '20px';
+            titleDiv.style.fontWeight = 'bold';
+            titleDiv.style.marginBottom = '20px';
+            titleDiv.textContent = title;
+            // Create a container to center the title and table
+            const container = document.createElement('div');
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.alignItems = 'center';
+            container.appendChild(titleDiv);
+            container.appendChild(clone);
+            // Append the container to the body
+            document.body.appendChild(container);
 
             // Get the dimensions of A4 landscape
             const a4WidthInMm = 297;  // A4 landscape width in mm
             // pixel to mm ratio
             const pixelToMm = 0.264583;
             // // Get the original table dimensions
-            const tableWidth = clone.offsetWidth * pixelToMm  ;  // Width in pixels
+            const tableWidth = clone.offsetWidth * pixelToMm;  // Width in pixels
             const tableHeight = clone.offsetHeight * pixelToMm;  // Height in pixels
             // // Calculate scaling factors to fit the table within the A4 dimensions
             const scaleX = a4WidthInMm / (tableWidth); // Convert pixels to mm (1 px = 0.264583 mm)
@@ -171,9 +305,9 @@
             };
 
             // Generate the PDF from the resized clone
-            html2pdf().from(clone).set(opt).save().then(() => {
+            html2pdf().from(container).set(opt).save().then(() => {
                 // Clean up by removing the clone after the PDF is generated
-                document.body.removeChild(clone);
+                document.body.removeChild(container);
             });
         }
 
@@ -199,7 +333,6 @@
 
                 // Convert worksheet to JSON
                 const results = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
                 chartData = results.slice(1).map((row) => {
                     const [name, role, manager, tooltip] = row;
                     const level = getLevel(manager, results.slice(1));
@@ -219,7 +352,7 @@
 
         function getLevel(manager, data) {
             if (!manager) return 0;
-            let level = 1;
+            let level = 0;
             let currentManager = manager;
             while (currentManager) {
                 const managerData = data.find(row => row[0] === currentManager);
@@ -296,4 +429,5 @@
         <p>Email: <a href="mailto:frank@smartman.com.tw">frank@smartman.com.tw</a></p>
     </div>
 </footer>
+
 </html>
