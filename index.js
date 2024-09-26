@@ -29,23 +29,24 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   // populate the colorList with the saved colors
   const colorList = document.getElementById("colorList");
-  levelColors.forEach((color) => {
-    const colorBox = document.createElement("div");
-    colorBox.className = "color-box";
-    colorBox.style.backgroundColor = color;
-    colorBox.onclick = function () {
-      selectColor(this);
-    };
-    colorList.appendChild(colorBox);
-  });
+levelColors.forEach((color) => {
+  const colorBox = document.createElement("div");
+  colorBox.className = "color-box";
+  colorBox.style.backgroundColor = color;
+  colorBox.onclick = function () {
+    selectColor(this);
+  };
+  colorList.appendChild(colorBox);
+});
+
   chartData = convertFromDataToChart(exampleData.slice(1));
   updateChartColor();
 
   google.charts.load("current", { packages: ["orgchart"] });
   google.charts.setOnLoadCallback(drawChart);
   // hide update and remove buttons
-  document.getElementById("updateColor").style.display = "none";
-  document.getElementById("removeColor").style.display = "none";
+  // document.getElementById("updateColor").style.display = "none";
+  // document.getElementById("removeColor").style.display = "none";
 });
 function updateLocalstorageColors() {
   localStorage.setItem("levelColors", JSON.stringify(levelColors));
@@ -157,16 +158,23 @@ function removeColor() {
     alert("請先選擇要移除的顏色");
   }
 }
+function toggleEmployeeIds() {
+  const employeeIds = document.querySelectorAll("#employeeId");
+  employeeIds.forEach((employeeId) => {
+    employeeId.style.display = employeeId.style.display === "none" ? "" : "none";
+  });
+  
+}
 function toggleUpdateRemoveColorButtons() {
-  const updateColorButton = document.getElementById("updateColor");
-  const removeColorButton = document.getElementById("removeColor");
-  if (selectedColorBox) {
-    updateColorButton.style.display = "block";
-    removeColorButton.style.display = "block";
-  } else {
-    updateColorButton.style.display = "none";
-    removeColorButton.style.display = "none";
-  }
+  // const updateColorButton = document.getElementById("updateColor");
+  // const removeColorButton = document.getElementById("removeColor");
+  // if (selectedColorBox) {
+  //   updateColorButton.style.display = "block";
+  //   removeColorButton.style.display = "block";
+  // } else {
+  //   updateColorButton.style.display = "none";
+  //   removeColorButton.style.display = "none";
+  // }
 }
 let levelColors = [];
 const headers = ["員工編號", "員工名稱", "職位", "主管編號", "主管名稱", "額外說明"];
@@ -192,38 +200,40 @@ let chart;
 let data;
 let options;
 function updateChartColor() {
-  //TODO: Add Employee IDs
+
   const output = chartData.map(([person, supervisor, tooltip]) => [
-    person.v, // Extract the name
+    // Extract employee id in the span with id employeeId
+    person.f.split("<span id=\"employeeId\">")[1].split("</span>")[0],
+    // Extract the name in the span with id employeeName
+    person.f.split("<span id=\"employeeName\">")[1].split("</span>")[0],
     person.f.split("<br/>")[1].replace("</div>", ""), // Extract the position
     supervisor || "", // Supervisor (use an empty string if none)
     tooltip, // Use the position as Tooltip for now (can adjust later if needed)
   ]);
-
   // Add the header row manually
   //TODO: Add Employee IDs
   output.unshift(headers);
   console.log("chartData in updateChartColor", chartData);
   console.log("output in updateChartColor", output);
   chartData = output.slice(1).map((row) => {
-    const [name, role, manager, tooltip] = row;
+    const [employeeId, name, role, manager, tooltip] = row;
     const level = getLevel(manager, output.slice(1));
     const color = levelColors[level % levelColors.length];
     return [
       {
-        v: name,
-        f: chartNodeHtml(name, role, color, tooltip),
+        v: employeeId,
+        f: chartNodeHtml(employeeId, name, role, color, tooltip),
       },
       manager,
       tooltip,
     ];
   });
+  console.log("chartData after updateChartColor", chartData);
 }
-function chartNodeHtml(name, role, color, tooltip) {
+function chartNodeHtml(employeeId, name, role, color, tooltip) {
   const colorWithSuperOpacity = color + "40";
-  return `
-    <div style="background-color:${colorWithSuperOpacity}; color:black; padding:5px; border-radius:8px; font-family: 'Microsoft JhengHei';border: 2px solid ${color};">
-      <strong>${name}</strong><br/>
+  return `<div style="background-color:${colorWithSuperOpacity}; color:black; padding:5px; border-radius:8px; font-family: 'Microsoft JhengHei';border: 2px solid ${color};">
+      <strong><span id="employeeName">${name}</span><span id="employeeId">${employeeId}</span></strong><br/>
       ${role}<br/>
       ${tooltip ? `<div style="font-size:10px; ">${tooltip}</div>` : ''}
     </div>
@@ -234,15 +244,15 @@ function convertFromDataToChart(data) {
   console.log("data in convertFromDataToChart", data);
   return data.map((row) => {
     const [employeeId, name, role, managerId, manager, tooltip] = row;
-    const managerDisplayedText = managerId === "" ? "" : manager + "(" + managerId + ")";
-    const level = getLevel(managerDisplayedText, data);
+    
+    const level = getLevel(managerId, data);
     const color = levelColors[level % levelColors.length];
     return [
       {
-        v: name + "(" + employeeId + ")",
-        f: chartNodeHtml(name, role, color, tooltip),
+        v: employeeId,
+        f: chartNodeHtml(employeeId, name, role, color, tooltip),
       },
-      managerDisplayedText,
+      managerId,
       tooltip,
     ];
   });
@@ -384,6 +394,7 @@ function handleFileUpload(event) {
 }
 
 function getLevel(manager, data) {
+  console.log('data in getLevel', data);
   if (!manager) return 0;
 
   let level = 0;
@@ -403,7 +414,7 @@ function getLevel(manager, data) {
     const managerData = data.find((row) => row[0] === currentManager);
 
     if (managerData) {
-      currentManager = managerData[2];
+      currentManager = managerData[3];
       level++;
     } else {
       break;

@@ -92,15 +92,50 @@
       }
 
       .setup-area {
-        /* light grey */
-        background-color: #f1f1f1;
+        background-color: #f1f1f1; /* light grey */
         padding-top: 10px;
         padding-bottom: 4px;
-        margin-bottom: 0px;
-        /* a bottom border */
+        margin-bottom: 0px; /* a bottom border */
         border-bottom: 1px solid #ccc;
+        display: flex; /* 使用 flexbox */
+        flex-wrap: wrap; /* 允許換行 */
+        justify-content: center; /* 垂直居中 */
+        align-items: center; /* 垂直對齊 */
       }
 
+      .setup-area > div {
+        margin: 5px; /* 控制元素之間的間距 */
+      }
+      /* 使標籤、輸入框和按鈕的寬度自適應 */
+      /* label {
+        margin-right: 10px;
+      } */
+
+      input[type="text"] {
+        width: 256px; /* 保持原來的寬度 */
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      input[type="color"] {
+        margin-left: 10px; /* 顏色選擇器的左邊距 */
+      }
+
+      button {
+        margin: 0 5px; /* 按鈕之間的邊距 */
+      }
+      input[type="checkbox"] {
+        display: inline-block; /* Ensures the checkbox is displayed inline */
+      }
+      .checkbox-container {
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Align items vertically centered */
+}
+
+.checkbox-container input[type="checkbox"] {
+  margin-right: 5px; /* Space between checkbox and label */
+}
       @media print {
         .button-container {
           display: none;
@@ -121,13 +156,16 @@
       <!-- Add a tag line -->
       <p
         style="
+        padding: 0px;
           text-align: center;
-          margin-bottom: 20px;
           font-size: 16px;
           color: #555;
           max-width: 600px;
           margin-left: auto;
           margin-right: auto;
+          margin-top: 2px;
+          padding-top: 2px;
+          padding-bottom: 2px;
           color: white;
         "
       >
@@ -156,93 +194,62 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <div class="setup-area">
-      <!-- an textbox to let users set the chart title -->
-      <div
-        style="
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin-bottom: 0px;
-        "
+      <label for="chartTitle">標題：</label>
+      <input
+        type="text"
+        id="chartTitle"
+        placeholder="輸入組織圖標題"
+        value="我的組織圖"
+      />
+      <p style="padding-left: 10px">顏色：</p>
+      <div id="colorList"></div>
+      <input type="color" id="colorPicker" value="#000000" />
+
+      <button
+        onclick="removeColor()"
+        class="button-color-config"
+        id="removeColor"
       >
-        <!-- add a setting gear icon -->
-        <label for="chartTitle" style="margin-right: 10px">標題：</label>
+        移除顏色
+      </button>
+      <button
+        onclick="updateColor()"
+        class="button-color-config"
+        id="updateColor"
+      >
+        <i class="fa fa-cog" aria-hidden="true"></i> 修改顏色
+      </button>
+      <button onclick="addColor()" class="button-color-config">新增顏色</button>
+      <!-- a checkbox to toggle visibility of employee ids in each node of the org chart -->
+      
+      <div class="checkbox-container">
         <input
-          type="text"
-          id="chartTitle"
-          placeholder="輸入組織圖標題"
-          value="我的組織圖"
-          style="
-            width: 256px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-          "
+          type="checkbox"
+          id="showEmployeeIds"
+          onchange="toggleEmployeeIds()"
         />
+        <label for="showEmployeeIds" style="padding: 0px;">顯示員工編號</label>
       </div>
-      <!-- An area to let users manage a list of colors to use for the chart and show default color list -->
-      <div
-        style="
-          justify-content: center;
-          align-items: center;
-          margin-bottom: 5px;
-          padding-top: 5px;
-        "
-      >
-        <div
-          style="display: flex; justify-content: center; align-items: center"
-        >
-          <p style="margin-right: 10px">顏色：</p>
-          <div
-            id="colorList"
-            style="display: flex; justify-content: center; align-items: center"
-          ></div>
-          <input
-            type="color"
-            id="colorPicker"
-            value="#000000"
-            style="margin-left: 10px"
-          />
-        </div>
-
-        <!-- update color -->
-        <div
-          style="display: flex; justify-content: center; align-items: center"
-        >
-          <button
-            onclick="removeColor()"
-            class="button-color-config"
-            id="removeColor"
-          >
-            移除顏色
-          </button>
-          <button
-            onclick="updateColor()"
-            class="button-color-config"
-            id="updateColor"
-          >
-            <i class="fa fa-cog" aria-hidden="true"></i>
-
-            修改顏色
-          </button>
-
-          <button onclick="addColor()" class="button-color-config">
-            新增顏色
-          </button>
-        </div>
-      </div>
+      
     </div>
     <style>
+      #colorList {
+        display: flex; /* 使用 flexbox 來排列顏色框 */
+        flex-wrap: wrap; /* 允許換行 */
+        align-items: center; /* 垂直居中對齊 */
+        margin-left: 10px; /* 與顏色標籤的間距 */
+      }
+
       .color-box {
         width: 20px;
         height: 20px;
         border-radius: 50%;
-        margin-right: 5px;
+        margin-right: 5px; /* 顏色框之間的間距 */
         cursor: pointer;
       }
     </style>
     <!-- add a chart title -->
-    <h2 style="text-align: center; margin-bottom: 20px" id="chart_title_div">
+    <h2 style="text-align: center; margin-bottom: 10px;" id="chart_title_div">
       我的組織圖
     </h2>
     <div id="chart_div"></div>
