@@ -38,7 +38,9 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     colorList.appendChild(colorBox);
   });
-  chartData = convertFromDataToChart(exampleData);
+  chartData = convertFromDataToChart(exampleData.slice(1));
+  updateChartColor();
+
   google.charts.load("current", { packages: ["orgchart"] });
   google.charts.setOnLoadCallback(drawChart);
   // hide update and remove buttons
@@ -168,26 +170,28 @@ function toggleUpdateRemoveColorButtons() {
 }
 let levelColors = [];
 let exampleData = [
-  ["Mike", "首席執行官", "", "首席執行官"],
-  ["Jim", "首席營運官", "Mike", "首席營運官"],
-  ["Alice", "首席財務官", "Mike", "首席財務官"],
-  ["Bob", "首席技術官", "Mike", "首席技術官"],
-  ["Carol", "人力資源總監", "Jim", "人力資源總監"],
-  ["David", "行銷總監", "Jim", "行銷總監"],
-  ["Eve", "財務控制師", "Alice", "財務控制師"],
-  ["Frank", "市場經理", "David", "市場經理"],
-  ["Grace", "品牌經理", "David", "品牌經理"],
-  ["Helen", "市場專員", "Frank", "市場專員"],
-  ["Ivy", "品牌專員", "Grace", "品牌專員"],
-  ["Jack", "市場助理", "Helen", "市場助理"],
-  ["Kelly", "品牌助理", "Ivy", "品牌助理"],
-  ["Lily", "市場實習生", "Jack", "市場實習生"],
+  ["員工編號", "員工", "職位", "主管編號", "主管", "說明"],
+  ["A0001", "Mike", "首席執行官", "", "", "首席執行官"],
+  ["A0002", "Jim", "首席營運官", "A0001", "Mike", "首席營運官"],
+  ["A0003", "Alice", "首席財務官", "A0001", "Mike", "首席財務官"],
+  ["A0004", "Bob", "首席技術官", "A0001", "Mike", "首席技術官"],
+  ["A0005", "Carol", "人力資源總監", "A0002", "Jim", "人力資源總監"],
+  ["A0006", "David", "行銷總監", "A0002", "Jim", "行銷總監"],
+  ["A0007", "Eve", "財務控制師", "A0003", "Alice", "財務控制師"],
+  ["A0008", "Frank", "市場經理", "A0006", "David", "市場經理"],
+  ["A0009", "Grace", "品牌經理", "A0006", "David", "品牌經理"],
+  ["A0010", "Helen", "市場專員", "A0008", "Frank", "市場專員"],
+  ["A0011", "Ivy", "品牌專員", "A0009", "Grace", "品牌專員"],
+  ["A0012", "Jack", "市場助理", "A0010", "Helen", "市場助理"],
+  ["A0013", "Kelly", "品牌助理", "A0011", "Ivy", "品牌助理"],
+  ["A0014", "Lily", "市場實習生", "A0012", "Jack", "市場實習生"],
 ];
 let chartData;
 let chart;
 let data;
 let options;
 function updateChartColor() {
+  //TODO: Add Employee IDs
   const output = chartData.map(([person, supervisor, tooltip]) => [
     person.v, // Extract the name
     person.f.split("<br/>")[1].replace("</div>", ""), // Extract the position
@@ -196,7 +200,10 @@ function updateChartColor() {
   ]);
 
   // Add the header row manually
-  output.unshift(["名稱", "職位", "主管", "Tooltip"]);
+  //TODO: Add Employee IDs
+  output.unshift(["員工編號", "員工顯示名稱", "職位", "主管編號", "主管顯示名稱", "額外說明"]);
+  console.log("chartData in updateChartColor", chartData);
+  console.log("output in updateChartColor", output);
   chartData = output.slice(1).map((row) => {
     const [name, role, manager, tooltip] = row;
     const level = getLevel(manager, output.slice(1));
@@ -204,27 +211,36 @@ function updateChartColor() {
     return [
       {
         v: name,
-        f: chartNodeHtml(name, role, color),
+        f: chartNodeHtml(name, role, color, tooltip),
       },
       manager,
       tooltip,
     ];
   });
 }
-function chartNodeHtml(name, role, color) {
-  return `<div style="background-color:${color}; color:white; padding:5px; border-radius:5px; font-family: 'Microsoft JhengHei';"><strong>${name}</strong><br/>${role}</div>`;
+function chartNodeHtml(name, role, color, tooltip) {
+  return `
+    <div style="background-color:${color}; color:white; padding:5px; border-radius:5px; font-family: 'Microsoft JhengHei';">
+      <strong>${name}</strong><br/>
+      ${role}<br/>
+      ${tooltip ? `<div style="font-size:10px; ">${tooltip}</div>` : ''}
+    </div>
+  `;
 }
+
 function convertFromDataToChart(data) {
+  console.log("data in convertFromDataToChart", data);
   return data.map((row) => {
-    const [name, role, manager, tooltip] = row;
-    const level = getLevel(manager, data);
+    const [employeeId, name, role, managerId, manager, tooltip] = row;
+    const managerDisplayedText = managerId === "" ? "" : manager + "(" + managerId + ")";
+    const level = getLevel(managerDisplayedText, data);
     const color = levelColors[level % levelColors.length];
     return [
       {
-        v: name,
-        f: chartNodeHtml(name, role, color),
+        v: name + "(" + employeeId + ")",
+        f: chartNodeHtml(name, role, color, tooltip),
       },
-      manager,
+      managerDisplayedText,
       tooltip,
     ];
   });
@@ -352,20 +368,8 @@ function handleFileUpload(event) {
       // Convert worksheet to JSON
       const results = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
       console.log("results", results);
-      chartData = results.slice(1).map((row) => {
-        const [name, role, manager, tooltip] = row;
-        const level = getLevel(manager, results.slice(1));
-        const color = levelColors[level % levelColors.length];
-        return [
-          {
-            v: name,
-            f: `<div style="background-color:${color}; color:white; padding:5px; border-radius:5px; font-family: 'Microsoft JhengHei';"><strong>${name}</strong><br/>${role}</div>`,
-          },
-          manager,
-          tooltip,
-        ];
-      });
-
+      chartData = convertFromDataToChart(results.slice(1));
+      updateChartColor();
       drawChart();
     };
 
@@ -407,41 +411,76 @@ function getLevel(manager, data) {
 function downloadTemplate() {
   // Define the data for the Excel file
   const data = [
-    ["員工", "職位", "主管", "說明"],
-    ["羅波特", "CEO", "", "首席執行官"],
-    ["米雪兒", "COO", "羅波特", "首席營運官"],
-    ["李明", "CTO", "羅波特", "首席技術官"],
-    ["張華", "CFO", "羅波特", "首席財務官"],
-    ["小林", "人力資源經理", "米雪兒", "負責招聘和培訓"],
-    ["大衛", "行銷經理", "米雪兒", "負責市場推廣與品牌管理"],
-    ["小美", "市場專員", "大衛", "負責社交媒體和廣告"],
-    ["艾莉莎", "銷售經理", "大衛", "負責銷售團隊的管理"],
-    ["凱莉", "業務代表", "艾莉莎", "負責客戶拜訪和需求收集"],
-    ["施密特", "財務分析師", "張華", "負責財務報告與分析"],
-    ["陳冠宇", "會計經理", "張華", "負責公司的會計事務"],
-    ["錢小芳", "初級會計", "陳冠宇", "負責日常賬目處理"],
-    ["方敏", "技術經理", "李明", "負責技術團隊的管理"],
-    ["潔西卡", "產品經理", "李明", "負責產品策略與開發"],
-    ["明莉", "開發經理", "方敏", "負責開發團隊的管理"],
-    ["小紅", "前端開發人員", "明莉", "負責網站的前端開發"],
-    ["小藍", "後端開發人員", "明莉", "負責網站的後端開發"],
-    ["史密斯", "資訊安全專家", "李明", "負責公司的資訊安全"],
-    ["小華", "IT支援專員", "史密斯", "負責技術支援與系統管理"],
-    ["凱薩", "企業發展經理", "羅波特", "負責商業拓展和策略規劃"],
-    ["羅莉", "公共關係經理", "凱薩", "負責公司與媒體的關係"],
-    ["希拉", "社交媒體經理", "大衛", "負責社交媒體策略與執行"],
-    ["阿東", "培訓專員", "小林", "負責員工培訓計畫"],
-    ["小玲", "內部培訓講師", "阿東", "負責提供培訓課程"],
-    ["大米", "客戶服務經理", "米雪兒", "負責客戶支持和滿意度"],
-    ["喬安", "客戶支持專員", "大米", "負責解答客戶疑問"],
-    ["小強", "數據科學家", "李明", "負責數據分析與報告"],
-    ["小白", "資料分析專員", "小強", "負責數據清理與初步分析"],
-    ["瑪莉", "品質保證經理", "潔西卡", "負責產品品質的監控"],
-    ["小灰", "測試工程師", "瑪莉", "負責產品測試與缺陷報告"],
-    ["澳里歐", "測試人員", "小紅", ""],
-    ["貓傻立", "測試檢測人員", "澳里歐", ""],
-    ["法蘭克", "監控人員", "貓傻立", ""],
-    ["雄寶北", "監督", "法蘭克", ""],
+    ["員工編號", "員工", "職位", "主管編號", "主管", "說明"],
+    ["A0001", "羅波特", "CEO", "", "", "首席執行官"],
+    ["A0002", "米雪兒", "COO", "A0001", "羅波特", "首席營運官"],
+    ["A0003", "李明", "CTO", "A0001", "羅波特", "首席技術官"],
+    ["A0004", "張華", "CFO", "A0001", "羅波特", "首席財務官"],
+    ["A0005", "小林", "人力資源經理", "A0002", "米雪兒", "負責招聘和培訓"],
+    ["A0006", "大衛", "行銷經理", "A0002", "米雪兒", "負責市場推廣與品牌管理"],
+    ["A0007", "小美", "市場專員", "A0006", "大衛", "負責社交媒體和廣告"],
+    ["A0008", "艾莉莎", "銷售經理", "A0006", "大衛", "負責銷售團隊的管理"],
+    ["A0009", "凱莉", "業務代表", "A0008", "艾莉莎", "負責客戶拜訪和需求收集"],
+    ["A0010", "施密特", "財務分析師", "A0004", "張華", "負責財務報告與分析"],
+    ["A0011", "陳冠宇", "會計經理", "A0004", "張華", "負責公司的會計事務"],
+    ["A0012", "錢小芳", "初級會計", "A0011", "陳冠宇", "負責日常賬目處理"],
+    ["A0013", "方敏", "技術經理", "A0003", "李明", "負責技術團隊的管理"],
+    ["A0014", "潔西卡", "產品經理", "A0003", "李明", "負責產品策略與開發"],
+    ["A0015", "明莉", "開發經理", "A0013", "方敏", "負責開發團隊的管理"],
+    ["A0016", "小紅", "前端開發人員", "A0015", "明莉", "負責網站的前端開發"],
+    ["A0017", "小藍", "後端開發人員", "A0015", "明莉", "負責網站的後端開發"],
+    ["A0018", "史密斯", "資訊安全專家", "A0003", "李明", "負責公司的資訊安全"],
+    [
+      "A0019",
+      "小華",
+      "IT支援專員",
+      "A0018",
+      "史密斯",
+      "負責技術支援與系統管理",
+    ],
+    [
+      "A0020",
+      "凱薩",
+      "企業發展經理",
+      "A0001",
+      "羅波特",
+      "負責商業拓展和策略規劃",
+    ],
+    ["A0021", "羅莉", "公共關係經理", "A0020", "凱薩", "負責公司與媒體的關係"],
+    [
+      "A0022",
+      "希拉",
+      "社交媒體經理",
+      "A0006",
+      "大衛",
+      "負責社交媒體策略與執行",
+    ],
+    ["A0023", "阿東", "培訓專員", "A0005", "小林", "負責員工培訓計畫"],
+    ["A0024", "小玲", "內部培訓講師", "A0023", "阿東", "負責提供培訓課程"],
+    [
+      "A0025",
+      "大米",
+      "客戶服務經理",
+      "A0002",
+      "米雪兒",
+      "負責客戶支持和滿意度",
+    ],
+    ["A0026", "喬安", "客戶支持專員", "A0025", "大米", "負責解答客戶疑問"],
+    ["A0027", "小強", "數據科學家", "A0003", "李明", "負責數據分析與報告"],
+    [
+      "A0028",
+      "小白",
+      "資料分析專員",
+      "A0027",
+      "小強",
+      "負責數據清理與初步分析",
+    ],
+    ["A0029", "瑪莉", "品質保證經理", "A0014", "潔西卡", "負責產品品質的監控"],
+    ["A0030", "小灰", "測試工程師", "A0029", "瑪莉", "負責產品測試與缺陷報告"],
+    ["A0031", "澳里歐", "測試人員", "A0016", "小紅", ""],
+    ["A0032", "貓傻立", "測試檢測人員", "A0031", "澳里歐", ""],
+    ["A0033", "法蘭克", "監控人員", "A0032", "貓傻立", ""],
+    ["A0034", "雄寶北", "監督", "A0033", "法蘭克", ""],
   ];
 
   // Create a new workbook
