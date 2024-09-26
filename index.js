@@ -169,8 +169,9 @@ function toggleUpdateRemoveColorButtons() {
   }
 }
 let levelColors = [];
+const headers = ["員工編號", "員工名稱", "職位", "主管編號", "主管名稱", "額外說明"];
 let exampleData = [
-  ["員工編號", "員工", "職位", "主管編號", "主管", "說明"],
+  headers,
   ["A0001", "Mike", "首席執行官", "", "", "首席執行官"],
   ["A0002", "Jim", "首席營運官", "A0001", "Mike", "首席營運官"],
   ["A0003", "Alice", "首席財務官", "A0001", "Mike", "首席財務官"],
@@ -201,7 +202,7 @@ function updateChartColor() {
 
   // Add the header row manually
   //TODO: Add Employee IDs
-  output.unshift(["員工編號", "員工顯示名稱", "職位", "主管編號", "主管顯示名稱", "額外說明"]);
+  output.unshift(headers);
   console.log("chartData in updateChartColor", chartData);
   console.log("output in updateChartColor", output);
   chartData = output.slice(1).map((row) => {
@@ -411,7 +412,7 @@ function getLevel(manager, data) {
 function downloadTemplate() {
   // Define the data for the Excel file
   const data = [
-    ["員工編號", "員工", "職位", "主管編號", "主管", "說明"],
+    headers,
     ["A0001", "羅波特", "CEO", "", "", "首席執行官"],
     ["A0002", "米雪兒", "COO", "A0001", "羅波特", "首席營運官"],
     ["A0003", "李明", "CTO", "A0001", "羅波特", "首席技術官"],
