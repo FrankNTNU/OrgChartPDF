@@ -12,10 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // load the default colors from localStorage
   const savedColors = localStorage.getItem("levelColors");
-  console.log("savedColors", savedColors);
 
   if (savedColors) {
-    console.log("JSON.parse(savedColors)", JSON.parse(savedColors));
     levelColors = JSON.parse(savedColors);
   } else {
     levelColors = [
@@ -219,8 +217,8 @@ function updateChartColor() {
   // Add the header row manually
   //TODO: Add Employee IDs
   output.unshift(headers);
-  console.log("chartData in updateChartColor", chartData);
-  console.log("output in updateChartColor", output);
+  //console.log("chartData in updateChartColor", chartData);
+  //console.log("output in updateChartColor", output);
   chartData = output.slice(1).map((row) => {
     const [employeeId, name, role, manager, tooltip] = row;
     const level = getLevel(manager, output.slice(1));
@@ -234,7 +232,7 @@ function updateChartColor() {
       tooltip,
     ];
   });
-  console.log("chartData after updateChartColor", chartData);
+  //console.log("chartData after updateChartColor", chartData);
 }
 function chartNodeHtml(employeeId, name, role, color, tooltip) {
   const colorWithSuperOpacity = color + "40";
@@ -247,7 +245,7 @@ function chartNodeHtml(employeeId, name, role, color, tooltip) {
 }
 
 function convertFromDataToChart(data) {
-  console.log("data in convertFromDataToChart", data);
+  //console.log("data in convertFromDataToChart", data);
   return data.map((row) => {
     const [employeeId, name, role, managerId, manager, tooltip] = row;
 
@@ -364,6 +362,12 @@ function printChart() {
 
 function handleFileUpload(event) {
   try {
+    // prompt the user to enter a password
+    const password = prompt("請輸入密碼");
+    if (password !== "70742842") {
+      alert("密碼錯誤");
+      return;
+    }
     const file = event.target.files[0];
 
     // Ensure the uploaded file is in .xlsx format
@@ -387,7 +391,7 @@ function handleFileUpload(event) {
 
       // Convert worksheet to JSON
       const results = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      console.log("results", results);
+      //console.log("results", results);
       chartData = convertFromDataToChart(results.slice(1));
       updateChartColor();
       drawChart();
@@ -400,7 +404,6 @@ function handleFileUpload(event) {
 }
 
 function getLevel(manager, data) {
-  console.log("data in getLevel", data);
   if (!manager) return 0;
 
   let level = 0;
@@ -502,10 +505,10 @@ function downloadTemplate() {
 
   // Convert the data array to a worksheet
   const worksheet = XLSX.utils.aoa_to_sheet(data);
-
+  
   // Append the worksheet to the workbook
   XLSX.utils.book_append_sheet(workbook, worksheet, "OrgChart");
-
+  // Add a password to the workbook
   // Write the workbook to a file
-  XLSX.writeFile(workbook, "org_chart_template.xlsx");
+  XLSX.writeFile(workbook, "org_chart_template.xlsx", );
 }
