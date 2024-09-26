@@ -12,142 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
     <!-- include index.js -->
     <script src="index.js"></script>
-    <style>
-      * {
-        font-family: "Microsoft JhengHei", "Arial", sans-serif;
-      }
-
-      body {
-        background-color: #f7f9fc;
-        margin: 0;
-
-        padding: 0px;
-        color: #333;
-      }
-
-      #chart_div {
-        width: 100%;
-        height: auto;
-        max-width: 100%;
-        /* Ensures it takes the full page width on the web */
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        overflow-x: auto;
-        /* Adds scrolling if the chart is too wide */
-      }
-
-      h1 {
-        color: #2c3e50;
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      .button-container {
-        text-align: center;
-        margin-bottom: 10px;
-      }
-
-      button {
-        /* white */
-        background-color: #fff;
-        border: none;
-        padding: 10px 20px;
-        margin: 0 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-      }
-
-      button:hover {
-        /* light yellow */
-        background-color: #f1c40f;
-      }
-
-      input[type="file"] {
-        display: none;
-      }
-
-      .button-color-config {
-        background-color: #bdc3c7;
-        color: #2c3e50;
-        border: none;
-        padding: 5px 10px;
-        margin: 0 5px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 14px;
-      }
-
-      .button-color-config:hover {
-        background-color: white;
-      }
-
-      .banner-div {
-        background-color: #0376c2;
-        margin: 0px;
-        padding-top: 20px;
-        padding-bottom: 1px;
-      }
-
-      .setup-area {
-        background-color: #f1f1f1; /* light grey */
-        padding-top: 10px;
-        padding-bottom: 4px;
-        margin-bottom: 0px; /* a bottom border */
-        border-bottom: 1px solid #ccc;
-        display: flex; /* 使用 flexbox */
-        flex-wrap: wrap; /* 允許換行 */
-        justify-content: center; /* 垂直居中 */
-        align-items: center; /* 垂直對齊 */
-      }
-
-      .setup-area > div {
-        margin: 5px; /* 控制元素之間的間距 */
-      }
-      /* 使標籤、輸入框和按鈕的寬度自適應 */
-      /* label {
-        margin-right: 10px;
-      } */
-
-      input[type="text"] {
-        width: 256px; /* 保持原來的寬度 */
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-      }
-
-      input[type="color"] {
-        margin-left: 10px; /* 顏色選擇器的左邊距 */
-      }
-
-      button {
-        margin: 0 5px; /* 按鈕之間的邊距 */
-      }
-      input[type="checkbox"] {
-        display: inline-block; /* Ensures the checkbox is displayed inline */
-      }
-      .checkbox-container {
-  display: flex; /* Use flexbox for alignment */
-  align-items: center; /* Align items vertically centered */
-}
-
-.checkbox-container input[type="checkbox"] {
-  margin-right: 5px; /* Space between checkbox and label */
-}
-      @media print {
-        .button-container {
-          display: none;
-        }
-
-        #chart_div {
-          width: 100%;
-          height: auto;
-          max-width: 100%;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="index.css" />
   </head>
 
   <body>
@@ -156,7 +21,7 @@
       <!-- Add a tag line -->
       <p
         style="
-        padding: 0px;
+          padding: 0px;
           text-align: center;
           font-size: 16px;
           color: #555;
@@ -221,35 +86,18 @@
       </button>
       <button onclick="addColor()" class="button-color-config">新增顏色</button>
       <!-- a checkbox to toggle visibility of employee ids in each node of the org chart -->
-      
+
       <div class="checkbox-container">
         <input
           type="checkbox"
           id="showEmployeeIds"
           onchange="toggleEmployeeIds()"
         />
-        <label for="showEmployeeIds" style="padding: 0px;">隱藏/顯示編號</label>
+        <label for="showEmployeeIds" style="padding: 0px">隱藏/顯示編號</label>
       </div>
-      
     </div>
-    <style>
-      #colorList {
-        display: flex; /* 使用 flexbox 來排列顏色框 */
-        flex-wrap: wrap; /* 允許換行 */
-        align-items: center; /* 垂直居中對齊 */
-        margin-left: 10px; /* 與顏色標籤的間距 */
-      }
-
-      .color-box {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        margin-right: 5px; /* 顏色框之間的間距 */
-        cursor: pointer;
-      }
-    </style>
     <!-- add a chart title -->
-    <h2 style="text-align: center; margin-bottom: 10px;" id="chart_title_div">
+    <h2 style="text-align: center; margin-bottom: 10px" id="chart_title_div">
       我的組織圖
     </h2>
     <div id="chart_div"></div>

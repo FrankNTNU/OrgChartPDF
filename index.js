@@ -29,15 +29,15 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   // populate the colorList with the saved colors
   const colorList = document.getElementById("colorList");
-levelColors.forEach((color) => {
-  const colorBox = document.createElement("div");
-  colorBox.className = "color-box";
-  colorBox.style.backgroundColor = color;
-  colorBox.onclick = function () {
-    selectColor(this);
-  };
-  colorList.appendChild(colorBox);
-});
+  levelColors.forEach((color) => {
+    const colorBox = document.createElement("div");
+    colorBox.className = "color-box";
+    colorBox.style.backgroundColor = color;
+    colorBox.onclick = function () {
+      selectColor(this);
+    };
+    colorList.appendChild(colorBox);
+  });
 
   chartData = convertFromDataToChart(exampleData.slice(1));
   updateChartColor();
@@ -161,9 +161,9 @@ function removeColor() {
 function toggleEmployeeIds() {
   const employeeIds = document.querySelectorAll("#employeeId");
   employeeIds.forEach((employeeId) => {
-    employeeId.style.display = employeeId.style.display === "none" ? "" : "none";
+    employeeId.style.display =
+      employeeId.style.display === "none" ? "" : "none";
   });
-  
 }
 function toggleUpdateRemoveColorButtons() {
   // const updateColorButton = document.getElementById("updateColor");
@@ -177,7 +177,14 @@ function toggleUpdateRemoveColorButtons() {
   // }
 }
 let levelColors = [];
-const headers = ["員工編號", "員工名稱", "職位", "主管編號", "主管名稱", "額外說明"];
+const headers = [
+  "員工編號",
+  "員工名稱",
+  "職位",
+  "主管編號",
+  "主管名稱",
+  "額外說明",
+];
 let exampleData = [
   headers,
   ["A0001", "Mike", "首席執行官", "", "", "CEO、創辦人、負責公司整體營運"],
@@ -200,12 +207,11 @@ let chart;
 let data;
 let options;
 function updateChartColor() {
-
   const output = chartData.map(([person, supervisor, tooltip]) => [
     // Extract employee id in the span with id employeeId
-    person.f.split("<span id=\"employeeId\">")[1].split("</span>")[0],
+    person.f.split('<span id="employeeId">')[1].split("</span>")[0],
     // Extract the name in the span with id employeeName
-    person.f.split("<span id=\"employeeName\">")[1].split("</span>")[0],
+    person.f.split('<span id="employeeName">')[1].split("</span>")[0],
     person.f.split("<br/>")[1].replace("</div>", ""), // Extract the position
     supervisor || "", // Supervisor (use an empty string if none)
     tooltip, // Use the position as Tooltip for now (can adjust later if needed)
@@ -235,7 +241,7 @@ function chartNodeHtml(employeeId, name, role, color, tooltip) {
   return `<div style="background-color:${colorWithSuperOpacity}; color:black; padding:5px; border-radius:8px; font-family: 'Microsoft JhengHei';border: 2px solid ${color};">
       <strong><span id="employeeName">${name}</span><span id="employeeId">${employeeId}</span></strong><br/>
       ${role}<br/>
-      ${tooltip ? `<div style="font-size:10px; ">${tooltip}</div>` : ''}
+      ${tooltip ? `<div style="font-size:10px; ">${tooltip}</div>` : ""}
     </div>
   `;
 }
@@ -244,7 +250,7 @@ function convertFromDataToChart(data) {
   console.log("data in convertFromDataToChart", data);
   return data.map((row) => {
     const [employeeId, name, role, managerId, manager, tooltip] = row;
-    
+
     const level = getLevel(managerId, data);
     const color = levelColors[level % levelColors.length];
     return [
@@ -394,7 +400,7 @@ function handleFileUpload(event) {
 }
 
 function getLevel(manager, data) {
-  console.log('data in getLevel', data);
+  console.log("data in getLevel", data);
   if (!manager) return 0;
 
   let level = 0;
@@ -472,14 +478,7 @@ function downloadTemplate() {
     ],
     ["A0023", "阿東", "培訓專員", "A0005", "小林", "負責員工培訓計畫"],
     ["A0024", "小玲", "內部培訓講師", "A0023", "阿東", "負責提供培訓課程"],
-    [
-      "A0025",
-      "大米",
-      "客戶服務經理",
-      "A0002",
-      "米雪兒",
-      "",
-    ],
+    ["A0025", "大米", "客戶服務經理", "A0002", "米雪兒", ""],
     ["A0026", "喬安", "客戶支持專員", "A0025", "大米", "負責解答客戶疑問"],
     ["A0027", "小強", "數據科學家", "A0003", "李明", ""],
     [
