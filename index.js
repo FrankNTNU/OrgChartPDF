@@ -220,8 +220,9 @@ function updateChartColor() {
   });
 }
 function chartNodeHtml(name, role, color, tooltip) {
+  const colorWithSuperOpacity = color + "40";
   return `
-    <div style="background-color:${color}; color:white; padding:5px; border-radius:5px; font-family: 'Microsoft JhengHei';">
+    <div style="background-color:${colorWithSuperOpacity}; color:black; padding:5px; border-radius:8px; font-family: 'Microsoft JhengHei';border: 2px solid ${color};">
       <strong>${name}</strong><br/>
       ${role}<br/>
       ${tooltip ? `<div style="font-size:10px; ">${tooltip}</div>` : ''}
