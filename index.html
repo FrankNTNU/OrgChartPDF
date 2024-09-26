@@ -17,25 +17,27 @@
 
   <body>
     <div class="banner-div">
-      <h1 style="margin: 0px; color: white">互動式組織圖</h1>
-      <!-- Add a tag line -->
-      <p
-        style="
-          padding: 0px;
-          text-align: center;
-          font-size: 16px;
-          color: #555;
-          max-width: 600px;
-          margin-left: auto;
-          margin-right: auto;
-          margin-top: 2px;
-          padding-top: 2px;
-          padding-bottom: 2px;
-          color: white;
-        "
-      >
-        快速利用 Excel 匯入並建立組織圖
-      </p>
+      <div>
+        <h1 style="margin: 0px; color: white">互動式組織圖</h1>
+        <!-- Add a tag line -->
+        <p
+          style="
+            padding: 0px;
+            text-align: center;
+            font-size: 16px;
+            color: #555;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 2px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            color: white;
+          "
+        >
+          快速利用 Excel 匯入並建立組織圖
+        </p>
+      </div>
       <div class="button-container">
         <button onclick="printChart()">
           <i class="fa fa-print" aria-hidden="true"></i> 列印組織圖
@@ -48,12 +50,14 @@
           id="fileInput"
           accept=".xlsx"
           style="display: none"
-          onchange="handleFileUpload(event)"
+          onchange="promptPasswordAndHandleFileUpload(event)"
         />
-       
         <button onclick="downloadTemplate()">
           <i class="fa fa-download" aria-hidden="true"></i> 下載範本
         </button>
+      </div>
+      <div class="company-name">
+        <a href="https://www.smartman.com.tw/tc/index.htm">志元資訊股份有限公司設計</a>
       </div>
     </div>
     <link

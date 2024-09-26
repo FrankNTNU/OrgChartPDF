@@ -32,6 +32,10 @@ h1 {
 .button-container {
   text-align: center;
   margin-bottom: 10px;
+  /* vertically center */
+  display: flex;
+  justify-content: center; /* Center buttons horizontally */
+  gap: 10px; /* Space between buttons */
 }
 
 button {
@@ -68,14 +72,31 @@ input[type="file"] {
 .button-color-config:hover {
   background-color: white;
 }
+a {
+  text-decoration: none; /* Remove the underline */
+  color: inherit; /* Inherit color from parent, or specify a specific color */
+}
 
+/* Remove special styling for visited links */
+a:visited {
+  color: inherit; /* Keep color the same as non-visited links */
+  text-decoration: none; /* No underline for visited links */
+}
 .banner-div {
   background-color: #0376c2;
   margin: 0px;
-  padding-top: 20px;
-  padding-bottom: 1px;
+  padding-top: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center; /* Horizontally center all content */
+  color: white;
 }
-
+.banner-div > div {
+  text-align: center; /* Center text inside sections */
+}
 .setup-area {
   background-color: #f1f1f1; /* light grey */
   padding-top: 10px;
