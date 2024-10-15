@@ -16,9 +16,17 @@
   </head>
 
   <body>
+    <!-- <div class="zoom-buttons">
+      <button onclick="zoomIn()">
+        <i class="fa fa-search-plus" aria-hidden="true"></i>
+      </button>
+      <button onclick="zoomOut()">
+        <i class="fa fa-search-minus" aria-hidden="true"></i>
+      </button>
+    </div> -->
     <div class="banner-div">
       <div>
-        <h1 style="margin: 0px; color: white">互動式組織圖</h1>
+        <h1 style="margin: 0px; color: white;font-size: 32px;">互動式組織圖</h1>
         <!-- Add a tag line -->
         <p
           style="
@@ -99,11 +107,12 @@
           id="showEmployeeIds"
           onchange="toggleEmployeeIds()"
         />
-        <label for="showEmployeeIds" style="padding: 0px">隱藏/顯示編號</label>
+        <label for="showEmployeeIds" style="padding: 0px;font-size: 14px;"><p>隱藏/顯示編號</p></label>
       </div>
+     
     </div>
     <!-- add a chart title -->
-    <h2 style="text-align: center; margin-bottom: 10px" id="chart_title_div">
+    <h2 style="text-align: center; margin-bottom: 10px; font-size: 24px;" id="chart_title_div">
       我的組織圖
     </h2>
     <!-- show red error messages -->

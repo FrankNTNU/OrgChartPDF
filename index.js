@@ -1,15 +1,8 @@
 let selectedColorBox = null;
+let currentZoomLevel = 100;
+
 // document ready
 document.addEventListener("DOMContentLoaded", function () {
-  // set chart_title_div textContent to the value of chartTitle input
-  document.getElementById("chart_title_div").textContent =
-    document.getElementById("chartTitle").value;
-  // listen to chartTitle input and update the chart title
-  document.getElementById("chartTitle").addEventListener("input", function () {
-    // update the h2 inside the div with id 'chart_title'
-    document.getElementById("chart_title_div").textContent = this.value;
-  });
-
   // load the default colors from localStorage
   const savedColors = localStorage.getItem("levelColors");
 
@@ -232,8 +225,8 @@ function updateChartColor() {
 function chartNodeHtml(employeeId, name, role, color, tooltip) {
   const colorWithSuperOpacity = color + "40";
   return `<div style="background-color:${colorWithSuperOpacity}; color:black; padding:5px; border-radius:8px; font-family: 'Microsoft JhengHei';border: 2px solid ${color};">
-      <strong><span id="employeeName">${name}</span><span id="employeeId">${employeeId}</span></strong><br/>
-      ${role ? `${role}<br/>` : ""}
+      <strong style="font-size:14px;"><span id="employeeName">${name}</span><span id="employeeId">${employeeId}</span></strong><br/>
+      <span style="font-size:10px;>${role ? `${role}</span><br/>` : ""}
       ${tooltip ? `<div style="font-size:10px; ">${tooltip}</div>` : ""}
     </div>
   `;
@@ -258,28 +251,37 @@ function convertFromDataToChart(data) {
   });
 }
 function drawChart() {
-  // update chartData background-color based on level
-  data = new google.visualization.DataTable();
-  data.addColumn("string", "Name");
-  data.addColumn("string", "Manager");
-  data.addColumn("string", "ToolTip");
+  console.log('chartData in drawChart', chartData);
+  try {
+    // clear the error message
+    document.getElementById("error_message").textContent = "";
+    // update chartData background-color based on level
+    data = new google.visualization.DataTable();
+    data.addColumn("string", "Name");
+    data.addColumn("string", "Manager");
+    data.addColumn("string", "ToolTip");
 
-  data.addRows(chartData);
+    data.addRows(chartData);
 
-  chart = new google.visualization.OrgChart(
-    document.getElementById("chart_div")
-  );
+    chart = new google.visualization.OrgChart(
+      document.getElementById("chart_div")
+    );
 
-  options = {
-    allowHtml: true,
-    size: "medium",
-    nodeClass: "node",
-    selectedNodeClass: "selected-node",
-    color: "#fff",
-    backgroundColor: "transparent",
-    compactRows: true,
-  };
-  chart.draw(data, options);
+    options = {
+      allowHtml: true,
+      size: "medium",
+      nodeClass: "node",
+      selectedNodeClass: "selected-node",
+      color: "#fff",
+      backgroundColor: "transparent",
+      compactRows: true,
+    };
+    chart.draw(data, options);
+  } catch (error) {
+    console.log(error);
+    // show error message in the UI
+    document.getElementById("error_message").textContent = error.message;
+  }
 }
 
 function printChart() {
@@ -391,6 +393,8 @@ function handleFileUpload(event) {
       const results = XLSX.utils.sheet_to_json(worksheet, {
         header: 1,
         blankrows: false,
+        // read each cell as string
+        raw: false,
       });
       console.log("results", results);
       chartData = convertFromDataToChart(results.slice(1));
@@ -515,4 +519,19 @@ function downloadTemplate() {
   // Add a password to the workbook
   // Write the workbook to a file
   XLSX.writeFile(workbook, "org_chart_template.xlsx");
+}
+
+function zoomIn() {
+  currentZoomLevel += 25;
+  applyZoom();
+}
+
+function zoomOut() {
+  currentZoomLevel = Math.max(25, currentZoomLevel - 25);
+  applyZoom();
+}
+
+function applyZoom() {
+  contentElement.style.transform = `scale(${currentZoomLevel / 100})`;
+  contentElement.style.transformOrigin = "top left";
 }

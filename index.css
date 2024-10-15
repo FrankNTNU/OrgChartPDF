@@ -9,7 +9,6 @@ body {
   padding: 0px;
   color: #333;
 }
-
 #chart_div {
   width: 100%;
   height: auto;
@@ -20,7 +19,6 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   overflow-x: auto;
-  /* Adds scrolling if the chart is too wide */
 }
 
 h1 {
@@ -173,4 +171,38 @@ input[type="checkbox"] {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+#content {
+  width: 100%;
+  min-height: 100vh;
+  transform-origin: top left;
+}
+
+.zoom-buttons {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.zoom-buttons button {
+  width: 40px;
+  height: 40px;
+  margin: 5px;
+  font-size: 16px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoom-buttons button:hover {
+  background-color: rgba(240, 240, 240, 0.9);
 }
