@@ -40,7 +40,7 @@ button {
   /* white */
   background-color: #fff;
   border: none;
-  padding: 10px 20px;
+  padding: 0px 10px;
   margin: 0 10px;
   border-radius: 5px;
   cursor: pointer;
@@ -91,9 +91,11 @@ a:visited {
   justify-content: space-between;
   align-items: center; /* Horizontally center all content */
   color: white;
-}
-.banner-div > div {
-  text-align: center; /* Center text inside sections */
+  position: fixed;      /* Make it stay on top */
+  top: 0;               /* Stick to the top */
+  width: 100%;          /* Full width */
+  z-index: 1000;        /* Ensure it's above other content */
+  height: 60px;         /* Set a fixed height */
 }
 .setup-area {
   background-color: #f1f1f1; /* light grey */
@@ -101,10 +103,16 @@ a:visited {
   padding-bottom: 4px;
   margin-bottom: 0px; /* a bottom border */
   border-bottom: 1px solid #ccc;
-  display: flex; /* 使用 flexbox */
-  flex-wrap: wrap; /* 允許換行 */
-  justify-content: center; /* 垂直居中 */
-  align-items: center; /* 垂直對齊 */
+  display: flex; /* Use flexbox */
+  flex-wrap: wrap; /* Allow wrapping */
+  justify-content: left; /* Horizontally center */
+  align-items: center; /* Vertical alignment */
+  margin-top: 60px; /* Add a margin to prevent it from hiding behind the banner */
+  padding-left: 20px;
+}
+
+.banner-div > div {
+  text-align: center; /* Center text inside sections */
 }
 
 .setup-area > div {
@@ -173,31 +181,7 @@ input[type="checkbox"] {
   text-overflow: ellipsis;
 }
 
-
-.zoom-buttons {
-  position: fixed;
-  top: 150px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-}
-
-.zoom-buttons button {
-  width: 50px;
-  height: 50px;
-  margin: 5px;
-  font-size: 18px;
-  border: none;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.zoom-buttons button:hover {
-  background-color: rgba(240, 240, 240, 0.9);
+.zoom-buttons button {  
+  font-size: 32px;
+  float: right;
 }

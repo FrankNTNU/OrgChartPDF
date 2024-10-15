@@ -14,11 +14,11 @@
     <script src="index.js"></script>
     <link rel="stylesheet" href="index.css" />
   </head>
-  
+
   <body>
     <div class="banner-div">
       <div>
-        <h1 style="margin: 0px; color: white;font-size: 32px;">互動式組織圖</h1>
+        <h1 style="margin: 0px; color: white; font-size: 32px">互動式組織圖</h1>
         <!-- Add a tag line -->
         <p
           style="
@@ -55,9 +55,19 @@
         <button onclick="downloadTemplate()">
           <i class="fa fa-download" aria-hidden="true"></i> 下載範本
         </button>
+        <div class="zoom-buttons">
+          <button onclick="zoomIn()">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+          </button>
+          <button onclick="zoomOut()">
+            <i class="fa fa-minus" aria-hidden="true"></i>
+          </button>
+        </div>
       </div>
       <div class="company-name">
-        <a href="https://www.smartman.com.tw/tc/index.htm">志元資訊股份有限公司設計</a>
+        <a href="https://www.smartman.com.tw/tc/index.htm"
+          >志元資訊股份有限公司設計</a
+        >
       </div>
     </div>
     <link
@@ -65,13 +75,6 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <div class="setup-area">
-      <label for="chartTitle">標題：</label>
-      <input
-        type="text"
-        id="chartTitle"
-        placeholder="輸入組織圖標題"
-        value="我的組織圖"
-      />
       <p style="padding-left: 10px">顏色：</p>
       <div id="colorList"></div>
       <input type="color" id="colorPicker" value="#000000" />
@@ -91,6 +94,13 @@
         <i class="fa fa-cog" aria-hidden="true"></i> 修改顏色
       </button>
       <button onclick="addColor()" class="button-color-config">新增顏色</button>
+      <label for="chartTitle">標題：</label>
+      <input
+        type="text"
+        id="chartTitle"
+        placeholder="輸入組織圖標題"
+        value="我的組織圖"
+      />
       <!-- a checkbox to toggle visibility of employee ids in each node of the org chart -->
 
       <div class="checkbox-container">
@@ -99,26 +109,23 @@
           id="showEmployeeIds"
           onchange="toggleEmployeeIds()"
         />
-        <label for="showEmployeeIds" style="padding: 0px;font-size: 14px;"><p>隱藏/顯示編號</p></label>
+        <label for="showEmployeeIds" style="padding: 0px; font-size: 14px"
+          ><p>隱藏/顯示編號</p></label
+        >
       </div>
-     
     </div>
     <!-- add a chart title -->
-    <h2 style="text-align: center; margin-bottom: 10px; font-size: 24px;" id="chart_title_div">
+    <h2
+      style="text-align: center; margin-bottom: 10px; font-size: 24px"
+      id="chart_title_div"
+    >
       我的組織圖
     </h2>
     <!-- show red error messages -->
     <div id="error_message" style="color: red; text-align: center"></div>
     <div id="chart_div"></div>
   </body>
-  <div class="zoom-buttons">
-    <button onclick="zoomIn()">
-      <i class="fa fa-search-plus" aria-hidden="true"></i>
-    </button>
-    <button onclick="zoomOut()">
-      <i class="fa fa-search-minus" aria-hidden="true"></i>
-    </button>
-  </div>
+
   <!-- Footer to specify company name, author, and contact information -->
   <footer>
     <div

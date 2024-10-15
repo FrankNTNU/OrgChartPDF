@@ -38,6 +38,13 @@ document.addEventListener("DOMContentLoaded", function () {
   // hide update and remove buttons
   // document.getElementById("updateColor").style.display = "none";
   // document.getElementById("removeColor").style.display = "none";
+  // get the width of chart_div
+  // listen to chartTitle input change event
+  document.getElementById("chartTitle").addEventListener("input", function () {
+    // update chart_title_div
+    document.getElementById("chart_title_div").textContent = this.value;
+
+  });
 });
 function updateLocalstorageColors() {
   localStorage.setItem("levelColors", JSON.stringify(levelColors));
@@ -251,7 +258,6 @@ function convertFromDataToChart(data) {
   });
 }
 function drawChart() {
-  console.log('chartData in drawChart', chartData);
   try {
     // clear the error message
     document.getElementById("error_message").textContent = "";
@@ -277,6 +283,15 @@ function drawChart() {
       compactRows: true,
     };
     chart.draw(data, options);
+    const chartDiv = document.getElementById("chart_div");
+    // Select the whole table element
+    const table = chartDiv.querySelector(
+      ".google-visualization-orgchart-table"
+    );
+    console.log("tableWidth", table.clientWidth);
+    const currentWindowWidth = window.innerWidth;
+    // set the whole document width to the table width
+    document.body.style.width = `${Math.max(currentWindowWidth, table.clientWidth)}px`;
   } catch (error) {
     console.log(error);
     // show error message in the UI
