@@ -238,7 +238,7 @@ function chartNodeHtml(employeeId, name, role, color, tooltip) {
   const colorWithSuperOpacity = color + "40";
   return `<div style="background-color:${colorWithSuperOpacity}; color:black; padding:5px; border-radius:8px; font-family: 'Microsoft JhengHei';border: 2px solid ${color};">
       <strong><span id="employeeName">${name}</span><span id="employeeId">${employeeId}</span></strong><br/>
-      ${role}<br/>
+      ${role ? `${role}<br/>` : ""}
       ${tooltip ? `<div style="font-size:10px; ">${tooltip}</div>` : ""}
     </div>
   `;
