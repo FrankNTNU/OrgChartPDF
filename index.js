@@ -214,11 +214,7 @@ function updateChartColor() {
     supervisor || "", // Supervisor (use an empty string if none)
     tooltip, // Use the position as Tooltip for now (can adjust later if needed)
   ]);
-  // Add the header row manually
-  //TODO: Add Employee IDs
   output.unshift(headers);
-  //console.log("chartData in updateChartColor", chartData);
-  //console.log("output in updateChartColor", output);
   chartData = output.slice(1).map((row) => {
     const [employeeId, name, role, manager, tooltip] = row;
     const level = getLevel(manager, output.slice(1));
@@ -232,7 +228,6 @@ function updateChartColor() {
       tooltip,
     ];
   });
-  //console.log("chartData after updateChartColor", chartData);
 }
 function chartNodeHtml(employeeId, name, role, color, tooltip) {
   const colorWithSuperOpacity = color + "40";
@@ -247,8 +242,9 @@ function chartNodeHtml(employeeId, name, role, color, tooltip) {
 function convertFromDataToChart(data) {
   //console.log("data in convertFromDataToChart", data);
   return data.map((row) => {
-    const [employeeId, name, role, managerId, manager, tooltip] = row;
-
+    let [employeeId, name, role, managerId, manager, tooltip] = row;
+    if (!managerId) managerId = "";
+    if (!employeeId) return;
     const level = getLevel(managerId, data);
     const color = levelColors[level % levelColors.length];
     return [
@@ -363,11 +359,13 @@ function printChart() {
 function handleFileUpload(event) {
   try {
     // prompt the user to enter a password
-    const password = prompt("請輸入密碼");
-    if (password !== "70742842") {
-      alert("密碼錯誤");
-      return;
-    }
+    // const password = prompt("請輸入密碼");
+    // if (password !== "70742842") {
+    //   alert("密碼錯誤");
+    //   return;
+    // }
+    // clear the error message
+    document.getElementById("error_message").textContent = "";
     const file = event.target.files[0];
 
     // Ensure the uploaded file is in .xlsx format
@@ -390,8 +388,11 @@ function handleFileUpload(event) {
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
       // Convert worksheet to JSON
-      const results = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      //console.log("results", results);
+      const results = XLSX.utils.sheet_to_json(worksheet, {
+        header: 1,
+        blankrows: false,
+      });
+      console.log("results", results);
       chartData = convertFromDataToChart(results.slice(1));
       updateChartColor();
       drawChart();
@@ -416,6 +417,9 @@ function getLevel(manager, data) {
       console.error(
         "Infinite loop detected. Circular hierarchy found." + currentManager
       );
+      // display this erorr message in the UI (id=error_message)
+      document.getElementById("error_message").textContent =
+        "偵測到循環階層。主管編號：" + currentManager;
       break; // Break the loop if we revisit the same manager
     }
 
@@ -505,10 +509,10 @@ function downloadTemplate() {
 
   // Convert the data array to a worksheet
   const worksheet = XLSX.utils.aoa_to_sheet(data);
-  
+
   // Append the worksheet to the workbook
   XLSX.utils.book_append_sheet(workbook, worksheet, "OrgChart");
   // Add a password to the workbook
   // Write the workbook to a file
-  XLSX.writeFile(workbook, "org_chart_template.xlsx", );
+  XLSX.writeFile(workbook, "org_chart_template.xlsx");
 }
