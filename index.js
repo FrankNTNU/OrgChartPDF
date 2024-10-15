@@ -359,11 +359,11 @@ function printChart() {
 function handleFileUpload(event) {
   try {
     // prompt the user to enter a password
-    // const password = prompt("請輸入密碼");
-    // if (password !== "70742842") {
-    //   alert("密碼錯誤");
-    //   return;
-    // }
+    const password = prompt("請輸入密碼");
+    if (password !== "70742842") {
+      alert("密碼錯誤");
+      return;
+    }
     // clear the error message
     document.getElementById("error_message").textContent = "";
     const file = event.target.files[0];
