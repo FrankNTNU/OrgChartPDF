@@ -173,15 +173,10 @@ input[type="checkbox"] {
   text-overflow: ellipsis;
 }
 
-#content {
-  width: 100%;
-  min-height: 100vh;
-  transform-origin: top left;
-}
 
 .zoom-buttons {
   position: fixed;
-  bottom: 20px;
+  top: 150px;
   right: 20px;
   z-index: 1000;
   display: flex;
@@ -189,10 +184,10 @@ input[type="checkbox"] {
 }
 
 .zoom-buttons button {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   margin: 5px;
-  font-size: 16px;
+  font-size: 18px;
   border: none;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 50%;

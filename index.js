@@ -532,6 +532,5 @@ function zoomOut() {
 }
 
 function applyZoom() {
-  contentElement.style.transform = `scale(${currentZoomLevel / 100})`;
-  contentElement.style.transformOrigin = "top left";
+  document.body.style.zoom = `${currentZoomLevel}%`;
 }
