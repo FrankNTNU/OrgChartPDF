@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "#e74c3c",
       "#f39c12",
       "#9b59b6",
-      "#1abc9c",
+      "#5e77db",
     ];
   }
   // populate the colorList with the saved colors

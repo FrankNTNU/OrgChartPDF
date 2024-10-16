@@ -99,7 +99,7 @@ a:visited {
   height: 60px;         /* Set a fixed height */
 }
 .company-name {
-  margin-right: 20px;
+  margin-right: 40px;
 }
 .setup-area {
   background-color: #f1f1f1; /* light grey */
@@ -188,4 +188,5 @@ input[type="checkbox"] {
 .zoom-buttons button {  
   font-size: 32px;
   float: right;
+  border-radius: 100%;
 }
