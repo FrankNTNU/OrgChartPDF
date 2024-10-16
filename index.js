@@ -41,7 +41,7 @@ const mockData = [
   ["A0031", "澳里歐", "測試人員", "A0010", "施密特", ""],
   ["A0032", "貓傻立", "測試檢測人員", "A0031", "澳里歐", ""],
   ["A0033", "法蘭克", "監控人員", "A0032", "貓傻立", ""],
-  ["A0034", "雄寶北", "監督", "A0033", "法蘭克", "專驗證監控"],
+  ["A0034", "雄寶北", "監督", "A0021", "羅莉", "專驗證監控"],
 ];
 // document ready
 document.addEventListener("DOMContentLoaded", function () {
@@ -331,6 +331,8 @@ function drawChart() {
 function printChart() {
   // resize browser zoom to 100%
   document.body.style.zoom = "100%";
+  // scroll to top
+  window.scrollTo(0, 0);
   const chartDiv = document.getElementById("chart_div");
   // Select the whole table element
   const table = chartDiv.querySelector(".google-visualization-orgchart-table");
@@ -380,7 +382,7 @@ function printChart() {
     margin: [10, 10], // Set margins (top, left, bottom, right) in mm
     filename: "org_chart.pdf",
     image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 4, allowTaint: true },
+    html2canvas: { scale: 5, allowTaint: true },
     jsPDF: {
       unit: "mm",
       format: [tableWidth + 50, tableHeight + 50],
