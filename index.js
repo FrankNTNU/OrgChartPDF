@@ -269,6 +269,7 @@ function convertFromDataToChart(data) {
   return data.map((row) => {
     let [employeeId, name, role, managerId, manager, tooltip] = row;
     if (!managerId) managerId = "";
+    if (name === "全部總計") return;
     if (!employeeId) return;
     const level = getLevel(managerId, data);
     const color = levelColors[level % levelColors.length];
