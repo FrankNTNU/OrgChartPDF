@@ -235,7 +235,8 @@ function updateChartColor() {
     person.f.split('<span id="employeeId">')[1].split("</span>")[0],
     // Extract the name in the span with id employeeName
     person.f.split('<span id="employeeName">')[1].split("</span>")[0],
-    person.f.split("<br/>")[1].replace("</div>", ""), // Extract the position
+    // Extract the role in the span with id role
+    person.f.split('<span style="font-size:10px; id="role">')[1].split("</span>")[0],
     supervisor || "", // Supervisor (use an empty string if none)
     tooltip, // Use the position as Tooltip for now (can adjust later if needed)
   ]);
@@ -258,7 +259,7 @@ function chartNodeHtml(employeeId, name, role, color, tooltip) {
   const colorWithSuperOpacity = color + "40";
   return `<div style="background-color:${colorWithSuperOpacity}; color:black; padding:5px; border-radius:8px; font-family: 'Microsoft JhengHei';border: 2px solid ${color};">
       <strong style="font-size:14px;"><span id="employeeName">${name}</span><span id="employeeId">${employeeId}</span></strong><br/>
-      <span style="font-size:10px;>${role ? `${role}</span><br/>` : ""}
+      <span style="font-size:10px; id="role">${role ? `${role}</span><br/>` : ""}
       ${tooltip ? `<div style="font-size:10px; ">${tooltip}</div>` : ""}
     </div>
   `;
