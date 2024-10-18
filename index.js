@@ -71,8 +71,12 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     colorList.appendChild(colorBox);
   });
-
-  chartData = convertFromDataToChart(exampleData.slice(1));
+  let lastUploadedData = localStorage.getItem("chartData");
+  if (lastUploadedData) {
+    chartData = JSON.parse(lastUploadedData);
+  } else {
+    chartData = convertFromDataToChart(exampleData.slice(1));
+  }
   updateChartColor();
 
   google.charts.load("current", { packages: ["orgchart"] });
@@ -445,6 +449,8 @@ function handleFileUpload(event) {
       });
       console.log("results", results);
       chartData = convertFromDataToChart(results.slice(1));
+      // save chartData to local storage
+      localStorage.setItem("chartData", JSON.stringify(chartData));
       updateChartColor();
       drawChart();
     };
