@@ -88,8 +88,12 @@ document.addEventListener("DOMContentLoaded", function () {
   // listen to chartTitle input change event
   document.getElementById("chartTitle").addEventListener("input", function () {
     // update chart_title_div
-    document.getElementById("chart_title_div").textContent = this.value;
+    console.log("chartTitle", this.value);
+    // replace spaces with non-breaking spaces
+    const enteredTitle = this.value.replace(/ /g, "\u00a0");
+    document.getElementById("chart_title_div").textContent = enteredTitle;
   });
+  document.getElementById("chart_title_div").textContent = document.getElementById('chartTitle').value.replace(/ /g, "\u00a0");
 });
 function updateLocalstorageColors() {
   localStorage.setItem("levelColors", JSON.stringify(levelColors));
