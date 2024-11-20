@@ -417,7 +417,7 @@ function handleFileUpload(event) {
   try {
     // prompt the user to enter a password
     const password = prompt("請輸入密碼");
-    if (password !== "70742842" && password !== "29039617") {
+    if (password !== "70742842" && password !== "29039617" && password !== "16069953") {
       alert("密碼錯誤");
       return;
     }
